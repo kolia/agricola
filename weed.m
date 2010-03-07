@@ -1,4 +1,6 @@
 function weed(cluster)
+% Command-line dialog to confirm deletion of remote cluster folders marked
+% for deletion by reaper.m
 
 fprintf('\nThe following remote folders have been marked for deletion:')
 for i=1:length(cluster)

@@ -1,5 +1,24 @@
 function cluster = sow( variable_name , call_me , args )
-
+%>> sow( 'my_result' , @()my_function(some_parameters) ) ;
+%
+%   LAUNCHES SINGLE JOB   my_function(some_parameters)   on the remote
+%   cluster. The string  'my_result'  indicates the name of the variable
+%   that will be used when retrieving results.
+%
+%   The rationale is that once results have been retrieved, this will have
+%   been equivalent to typing:  my_result = my_function(some_parameters) ;
+%
+%>> sow( 'my_result' , ...
+%        @(param1,param2) my_func( param1 , other_params , param2 ) , ...
+%        { { 3  'first' }  { 1  'second' }  { 2  'third' } } ) ;
+%
+%   LAUNCHES MULTIPLE JOBS (in this example 3) with different
+%   parameters. This would be equivalent to the local commands:
+%   my_result{1} = my_func( 3 ,other_params, 'first'  ) ;
+%   my_result{2} = my_func( 1 ,other_params, 'second' ) ;
+%   my_result{3} = my_func( 2 ,other_params, 'third'  ) ;
+%
+%
 if nargin<3
     args = {{}} ;
 end

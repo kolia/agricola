@@ -1,5 +1,6 @@
 function [status,stdout] = xinu( command , option )
-% same as 'unix', but displays stdout if return status is not 0
+% same as matlab builtin 'unix', but displays stdout if return status is
+% not 0
 
 if nargin>1
     [status,stdout] = unix( command , option ) ;

@@ -1,3 +1,19 @@
+%%  USEAGE
+%
+%>> reap ;
+%
+%   RETRIEVES ALL RESULTS present in the remote working folder. Information
+%   about the status of jobs are printed out, as well as more complete
+%   information for the last submitted job (standard out or standard error
+%   depending on job status). The results of successful jobs are placed in
+%   the matlab workspace (as variable 'my_result' in the example above).
+%
+%   reap also places variable 'agricola' in the matlab workspace.
+%   agricola.cluster{i}.job{j} contains fields 'err', 'logfile' and 'out',
+%   with the contents of these three files on the remote server.
+%
+%
+
 clear agricola
 
 [agricola.result,agricola.cluster] = reaper() ;

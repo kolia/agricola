@@ -29,7 +29,7 @@
 %
 %>> reap ;
 %
-%   Retrieves all results present in the remote working folder. Information
+%   RETRIEVES ALL RESULTS present in the remote working folder. Information
 %   about the status of jobs are printed out, as well as more complete
 %   information for the last submitted job (standard out or standard error
 %   depending on job status). The results of successful jobs are placed in
@@ -44,7 +44,7 @@
 %        @(param1,param2) my_func( param1 , other_params , param2 ) , ...
 %        { { 3  'first' }  { 1  'second' }  { 2  'third' } } ) ;
 %
-%   Launches a cluster of (in this example) 3 jobs with different
+%   LAUNCHES MULTIPLE JOBS (in this example 3) with different
 %   parameters. This would be equivalent to the local commands:
 %   my_result{1} = my_func( 3 ,other_params, 'first'  ) ;
 %   my_result{2} = my_func( 1 ,other_params, 'second' ) ;
@@ -59,6 +59,8 @@
 %   copy those folders into your current directory, or into your remote
 %   directory, making sure to add them to the path in the functions you
 %   call. This could be improved in future versions by giving sow.m a list of
-%   paths to copy from. Also, no support for mex files yet.
+%   paths to copy from. Also, no support for mex files: compilation of mex
+%   files can easily be added to your own functions. Check out sow.m 
+%   line 42 to add patterns to what is copied over.
 %
 %   This is monkey-code. Expect bugs.
