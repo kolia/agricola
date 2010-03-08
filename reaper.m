@@ -45,8 +45,8 @@ for i=1:length(cluster_ids)
             for j=1:length(filenames)
                 
                 if strcmp(filenames{j}(end-3:end),'.mat')
-                    load(sprintf('%s/%s',cluster_ids{i},filenames{j})) ;
-                    x = result ;
+                    x = load(sprintf('%s/%s',cluster_ids{i},filenames{j})) ;
+                    x = x.result ;
                 else
                     fid = fopen(sprintf('%s/%s',cluster_ids{i},filenames{j})) ;
                     x = fscanf(fid,'%c') ;
@@ -62,6 +62,7 @@ for i=1:length(cluster_ids)
                     file_type   = file_type{1} ;
                     if strcmp(file_type,'result')
                         if isfield(x,'result')
+                            {x.variable_name job_number}
                             result.(x.variable_name){job_number} = x.result ;
                             cluster{i}.job{job_number}.result = rmfield(x,'result') ;
                         else
@@ -73,7 +74,7 @@ for i=1:length(cluster_ids)
                 end
             end
         end
-        unix(sprintf('rm -rf %s',cluster_ids{i})) ;
+%         unix(sprintf('rm -rf %s',cluster_ids{i})) ;
     end
 end
 
