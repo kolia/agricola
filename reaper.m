@@ -74,7 +74,7 @@ for i=1:length(cluster_ids)
                 end
             end
         end
-%         unix(sprintf('rm -rf %s',cluster_ids{i})) ;
+        unix(sprintf('rm -rf %s',cluster_ids{i})) ;
     end
 end
 
