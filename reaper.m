@@ -62,7 +62,6 @@ for i=1:length(cluster_ids)
                     file_type   = file_type{1} ;
                     if strcmp(file_type,'result')
                         if isfield(x,'result')
-                            {x.variable_name job_number}
                             result.(x.variable_name){job_number} = x.result ;
                             cluster{i}.job{job_number}.result = rmfield(x,'result') ;
                         else
