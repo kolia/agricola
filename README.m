@@ -9,9 +9,11 @@
 %
 %% INSTALL
 %
-%   0)  Set up public ssh keys so you can log into the condor submit node
+%  -1)  Set up public ssh keys so you can log into the condor submit node
 %       without being asked for your password  =>  google for ssh-keygen
-%   1)  Make sure the agricola/ folder is in your path.
+%   0)  Make sure agricola/agricola.sh has execution permissions
+%       cd agricola ; chmod a+x agricola.sh
+%   1)  Add the agricola/ folder is in your matlab path.
 %   2)  Modify  SET_ME_UP.m   (in this folder) appropriately.
 %
 %
