@@ -11,7 +11,7 @@ ssh = sprintf('ssh %s@%s',user,server) ;
     ssh,root)) ;
 
 cluster_ids = regexp(stdout,...
-    'cluster___[MTWFS][ouehra][neduitn]-[0-9]*-[A-Z][a-z][a-z]-[0-9][0-9][0-9][0-9]__.\S*','match') ;
+    'cluster___\S*___[MTWFS][ouehra][neduitn]-[0-9]*-[A-Z][a-z][a-z]-[0-9][0-9][0-9][0-9]__[0-9][0-9]-[0-9][0-9]-[0-9][0-9]','match') ;
 
 login = sprintf('%s@%s',user,server) ;
 
@@ -20,7 +20,7 @@ result  = struct ;
 
 for i=1:length(cluster_ids)
     
-    if nargin<1 || strcmp(cluster_ids{i}(end-length(var_name)+1:end),var_name)
+    if nargin<1 || strcmp(cluster_ids{i}(11:10+length(var_name)),var_name)
         warning off ; mkdir(cluster_ids{i}) ; warning on ;
         cluster{i}.id = cluster_ids{i} ;
         

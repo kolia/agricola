@@ -7,10 +7,7 @@ universe = vanilla
 #Requirements = OpSys == "LINUX"
 
 notification = Always
-notify_user = kss2137@columbia.edu
 +AccountingGroup = "group_stat"
-
-executable = agricola.sh
 
 arguments = job_number=$(job_number)
 

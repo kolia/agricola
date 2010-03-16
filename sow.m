@@ -37,7 +37,7 @@ for i=1:length(args)
     cluster.jobs{i}.args           = args{i} ;
 end
 
-cluster.id = sprintf('cluster___%s___%s',datestr(now,'ddd-dd-mmm-yyyy__HH-MM-SS'),variable_name) ;
+cluster.id = sprintf('cluster___%s___%s',variable_name,datestr(now,'ddd-dd-mmm-yyyy__HH-MM-SS')) ;
 
 % make job folder, containing cluster.mat
 mkdir(cluster.id)
@@ -47,7 +47,10 @@ save( sprintf('%s/cluster.mat', cluster.id) , 'cluster' )
 ssh = sprintf('ssh %s@%s',user,server) ;
 
 % copy agricola.sub onto agricola.submit as base submit file
-xinu( sprintf('cp %s/agricola.sub %s/agricola.submit', here, here )) ;
+xinu( sprintf('cp %s/agricola.sub %s/agricola.submit ; echo ''notify_user = %s'' >> %s/agricola.submit ; echo ''executable = %s.sh'' >> %s/agricola.submit ;', here, here , email , here , variable_name , here )) ;
+
+% copy agricola.sh onto <VARIABLE_NAME>.sh
+xinu( sprintf('cp %s/agricola.sh %s/%s.sh', here, here , variable_name )) ;
 
 % append length(args) queue statements to agricola.submit
 for i=1:length(args)
@@ -57,8 +60,8 @@ end
 
 % scp cluster folder, .m .sh and .submit files to remote directory
 xinu( sprintf(...
-    'scp -r %s %s@%s:%s ; scp %s/agricola.submit */*.m %s/agricola.sh %s/agricola.m *.m %s@%s:%s/%s',...
-     cluster.id,user,server,root,here,here,here,user,server,root,cluster.id)) ;
+    'scp -r %s %s@%s:%s ; scp %s/agricola.submit */*.m %s/%s.sh %s/agricola.m *.m %s@%s:%s/%s',...
+     cluster.id,user,server,root,here,here,variable_name,here,user,server,root,cluster.id)) ;
 
 % delete job folder from current directory: cleaning up
 xinu(sprintf('rm -rf %s',cluster.id)) ;
