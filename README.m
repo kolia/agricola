@@ -13,7 +13,7 @@
 %       without being asked for your password  =>  google for ssh-keygen
 %   0)  Make sure agricola/agricola.sh has execution permissions
 %       cd agricola ; chmod a+x agricola.sh
-%   1)  Add the agricola/ folder is in your matlab path.
+%   1)  Make sure the agricola/ folder is in your matlab path.
 %   2)  Modify  SET_ME_UP.m   (in this folder) appropriately.
 %
 %
@@ -26,7 +26,8 @@
 %   that will be used when retrieving results.
 %
 %   The rationale is that once results have been retrieved, this will have
-%   been equivalent to typing:  my_result = my_function(some_parameters) ;
+%   been equivalent to typing:  
+%   >> my_result = my_function(some_parameters) ;
 %   
 %
 %>> reap ;
@@ -48,13 +49,18 @@
 %
 %   LAUNCHES MULTIPLE JOBS (in this example 3) with different
 %   parameters. This would be equivalent to the local commands:
-%   my_result{1} = my_func( 3 ,other_params, 'first'  ) ;
-%   my_result{2} = my_func( 1 ,other_params, 'second' ) ;
-%   my_result{3} = my_func( 2 ,other_params, 'third'  ) ;
+%   >> my_result{1} = my_func( 3 ,other_params, 'first'  ) ;
+%   >> my_result{2} = my_func( 1 ,other_params, 'second' ) ;
+%   >> my_result{3} = my_func( 2 ,other_params, 'third'  ) ;
 %
 %
 %
 %% NOTES
+%
+%   agricola modifies the random seed so that they are different across
+%   jobs. This is implemented in agricola.m, so that program behaviour is
+%   similar to what one would expect on a local matlab instance (since
+%   condor clusters of jobs often give the same seed for every job).
 %
 %   agricola only copies .m files in the current folder to the remote
 %   directory. If your calculation depends on code in other folders, either

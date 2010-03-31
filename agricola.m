@@ -15,8 +15,11 @@ result.UNFINISHED = 1 ;
 % save intermediate result.mat
 save(sprintf('result_%d',job_number-1),'result')
 
+% set random seed to different values for different jobs
+RandStream.setDefaultStream(RandStream('mt19937ar','seed',sum(100*clock)+job_number));
+
 % carry out calculation, store result in result.result
-if length(job.args)>0
+if ~isempty(job.args)
     arg_string = sprintf( 'job.args{%d},' , 1:length(job.args)) ;
     arg_string = arg_string(1:end-1) ;
     eval_string = sprintf('result.result = cluster.call_me( %s ) ;',arg_string) ;
