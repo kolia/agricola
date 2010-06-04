@@ -51,7 +51,7 @@ xinu( sprintf('cp %s/agricola.sub %s/agricola.submit ; echo ''notify_user = %s''
                here, cluster.id , email , cluster.id , variable_name , cluster.id )) ;
 
 % copy agricola.sh onto <VARIABLE_NAME>.sh
-xinu( sprintf('mv %s/agricola.sh %s/%s.sh', here, cluster.id , variable_name )) ;
+xinu( sprintf('cp %s/agricola.sh %s/%s.sh', here, cluster.id , variable_name )) ;
 
 % append length(args) queue statements to agricola.submit
 for i=1:length(args)
