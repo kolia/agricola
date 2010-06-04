@@ -58,11 +58,31 @@ for i=1:length(args)
         'echo ''\njob_number = %d\nqueue\n'' >> %s/agricola.submit',i,here)) ;
 end
 
-% scp cluster folder, .m .sh and .submit files to remote directory
-xinu( sprintf(...
-    'scp -r %s %s@%s:%s ; scp %s/agricola.submit */*.m %s/%s.sh %s/agricola.m *.m %s@%s:%s/%s',...
-     cluster.id,user,server,root,here,here,variable_name,here,user,server,root,cluster.id)) ;
 
+% xinu( sprintf(...
+%     'scp -r %s %s@%s:%s ; scp %s/agricola.submit */*.m %s/%s.sh %s/agricola.m *.m %s@%s:%s/%s',...
+%      cluster.id,user,server,root,here,here,variable_name,here,user,server,root,cluster.id)) ;
+
+
+% scp cluster folder, .sh and .submit files to remote directory
+xinu( sprintf('scp -r %s %s@%s:%s' , cluster.id,user,server,root)) ;
+lscp(sprintf('%s/agricola.submit %s/%s.sh %s/agricola.m',...
+              here,here,variable_name,here),...
+     sprintf('%s@%s:%s/%s',user,server,root,cluster.id)) ;
+ 
+ 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%% MODIFY THIS IF YOU NEED MORE FILES TRANSFERED!!! %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+lscp('*.mex *.m */*.m */*.mex',...
+     sprintf('%s@%s:%s/%s',user,server,root,cluster.id)) ;
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+
+ 
+ 
 % delete job folder from current directory: cleaning up
 xinu(sprintf('rm -rf %s',cluster.id)) ;
 
