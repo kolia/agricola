@@ -76,7 +76,7 @@ lscp('*.mex *.m */*.m */*.mex',...
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
- 
+
  
 % delete job folder from current directory: cleaning up
 xinu(sprintf('rm -rf %s',cluster.id)) ;
