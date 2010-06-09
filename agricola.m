@@ -29,7 +29,7 @@ end
 
 result = rmfield(result,'UNFINISHED') ;
 
-fprintf('evaluating %s\n',eval_string)
+% fprintf('evaluating %s\n',eval_string)
 eval(eval_string)
 
 % save result.mat

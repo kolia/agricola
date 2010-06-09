@@ -18,12 +18,14 @@ login = sprintf('%s@%s',user,server) ;
 cluster = cell(length(cluster_ids),1) ;
 result  = struct ;
 
-for i=1:length(cluster_ids)
+for i=length(cluster_ids):-1:1
     
+    % should we look for 'var_name' on server?
     if nargin<1 || strcmp(cluster_ids{i}(11:10+length(var_name)),var_name)
         warning off ; mkdir(cluster_ids{i}) ; warning on ;
         cluster{i}.id = cluster_ids{i} ;
         
+        % we're looking for all variables
         if nargin<1
             [status,stdout] = unix(sprintf(...
                 '%s "cd %s/%s ; ls -r | grep ''\\(^[0-9]\\+\\.[0-9]\\+\\.*\\|result*\\)''"',...
@@ -31,14 +33,15 @@ for i=1:length(cluster_ids)
             status = xinu(sprintf('scp %s:%s/%s/[0-9r][0-9e][0-9s]*.* %s',...
                 login,root,cluster_ids{i},cluster_ids{i})) ;
             
+        % we're looking for one variable, this must be the one
         else
             [status,stdout] = unix(sprintf(...
                 '%s "cd %s/%s ; ls -r | grep ''result*''"',...
                 ssh,root,cluster_ids{i})) ;
             status = xinu(sprintf('scp %s:%s/%s/[0-9r][0-9e][0-9s]*.* %s',...
-                login,root,cluster_ids{i},cluster_ids{i})) ;
-            
+                login,root,cluster_ids{i},cluster_ids{i})) ;            
         end
+        
         
         if ~status
             filenames = regexp(stdout,'\S+','match') ;
@@ -62,6 +65,9 @@ for i=1:length(cluster_ids)
                     file_type   = file_type{1} ;
                     if strcmp(file_type,'result')
                         if isfield(x,'result')
+                            if j==1 && isfield(result,x.variable_name)
+                                result.(x.variable_name) = {} ;
+                            end
                             result.(x.variable_name){job_number} = x.result ;
                             cluster{i}.job{job_number}.result = rmfield(x,'result') ;
                         else
