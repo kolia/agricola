@@ -54,7 +54,7 @@ usage
 `>> sow( 'my_result' , @(param1,param2) my_func( param1 , other_params , param2 ) ,
   { { 1  'second' }  { 2  'third' } } ) ;`
 
->   launches multiple jobs (in this example 3) with different
+>   launches multiple jobs (in this example 2) with different
 >   parameters. This would be equivalent to the local commands:
    
 `>> my_result{2} = my_func( 1 ,other_params, 'second' ) ;`
