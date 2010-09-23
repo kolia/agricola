@@ -45,8 +45,10 @@ usage
 >   depending on job status). The results of successful jobs are placed in
 >   the matlab workspace (as variable 'my_result' in the example above).
 
->   a = reap ;   returns a structure
->   ` a.cluster{i}.job{j} ` which contains fields '`err`', '`logfile`' and '`out`',
+`>   a = reap ;`
+
+>   returns a structure ` a.cluster{i}.job{j} ` 
+>   which contains fields '`err`', '`logfile`' and '`out`',
 >   with the contents of these three files on the remote server.
 
 
