@@ -47,11 +47,11 @@ save( sprintf('%s/cluster.mat', cluster.id) , 'cluster' )
 ssh = sprintf('ssh %s@%s',user,server) ;
 
 % copy agricola.sub onto agricola.submit as base submit file
-xinu( sprintf('cp %s/agricola.sub %s/agricola.submit ; echo ''notify_user = %s'' >> %s/agricola.submit ; echo ''executable = %s.sh'' >> %s/agricola.submit ;',...
+xinu( sprintf('cp "%s/agricola.sub" %s/agricola.submit ; echo ''notify_user = %s'' >> %s/agricola.submit ; echo ''executable = %s.sh'' >> %s/agricola.submit ;',...
                here, cluster.id , email , cluster.id , variable_name , cluster.id )) ;
 
 % copy agricola.sh onto <VARIABLE_NAME>.sh
-xinu( sprintf('cp %s/agricola.sh %s/%s.sh', here, cluster.id , variable_name )) ;
+xinu( sprintf('cp "%s/agricola.sh" %s/%s.sh', here, cluster.id , variable_name )) ;
 
 % append length(args) queue statements to agricola.submit
 for i=1:length(args)
@@ -61,7 +61,7 @@ end
 
 % scp cluster folder, .sh and .submit files to remote directory
 xinu( sprintf('scp -r %s %s@%s:%s' , cluster.id,user,server,root)) ;
-lscp(sprintf('%s/%s.sh %s/agricola.m',...
+lscp(sprintf('"%s/%s.sh" "%s/agricola.m"',...
               here,variable_name,here),...
      sprintf('%s@%s:%s/%s',user,server,root,cluster.id)) ;
  
