@@ -49,7 +49,9 @@ for i=length(cluster_ids):-1:1
                 
                 if strcmp(filenames{j}(end-3:end),'.mat')
                     x = load(sprintf('%s/%s',cluster_ids{i},filenames{j})) ;
-                    x = x.result ;
+                    if isfield(x,'result')
+                        x = x.result ;
+                    end
                 else
                     fid = fopen(sprintf('%s/%s',cluster_ids{i},filenames{j})) ;
                     x = fscanf(fid,'%c') ;

@@ -67,6 +67,7 @@ for i=1:length(agricola.cluster)
                                                         
                             % save result of job j in main workspace
                             result{j} = agricola.result.(variable_name){j} ;
+                            agricola.result.(variable_name){j} = [] ;
                         end
                     end
                 else
@@ -74,6 +75,7 @@ for i=1:length(agricola.cluster)
                     % if only 1 job
                     if isfield( agricola.result,variable_name)
                         result = agricola.result.(variable_name){1} ;
+                        agricola.result.(variable_name){1} = [] ;
                     end
                 end
                 
