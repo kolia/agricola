@@ -2,7 +2,7 @@ agricola README
 ---------------
 
    Use case:
-   You have access to a condor cluster and want to run matlab jobs on it.
+   You have access to a CONDOR cluster and want to run matlab jobs on it.
 
    agricola sends jobs to the cluster for you from within matlab, and
    retrieves information about job progess and results as well, all with just two commands: `sow` and `reap`.
