@@ -1,4 +1,4 @@
-function cluster = sow( variable_name , call_me , args )
+function cluster = sow( variable_name , call_me , args , PBS_options )
 %>> sow( 'my_result' , @()my_function(some_parameters) ) ;
 %
 %   LAUNCHES SINGLE JOB   my_function(some_parameters)   on the remote
@@ -23,8 +23,23 @@ if nargin<3
     args = {{}} ;
 end
 
-% call 'setup' to load username, server and remote working folder
+% call 'setup' to load username, server, remote working folder
+% and default PBS directives
 SET_ME_UP
+
+% name of this job's folder
+cluster.id = sprintf('cluster___%s___%s',...
+    variable_name,datestr(now,'ddd-dd-mmm-yyyy__HH-MM-SS')) ;
+
+% apply additional PBS_options sown as argument
+options = fieldnames(PBS_options) ;
+for i=1:length(options)
+    PBS.(options{i}) = PBS_options.(options{i}) ;
+end
+
+PBS.o = sprintf('localhost:%s/%s',root,cluster.id) ;
+PBS.e = sprintf('localhost:%s/%s',root,cluster.id) ;
+PBS.N = variable_name ;
 
 here = which('sow') ;
 here = here(1:end-6) ;
@@ -34,38 +49,23 @@ cluster.call_me        = call_me ;
 
 % create structure containing job descriptions
 for i=1:length(args)
-    cluster.jobs{i}.args           = args{i} ;
+    cluster.jobs{i}.args = args{i} ;
 end
-
-cluster.id = sprintf('cluster___%s___%s',variable_name,datestr(now,'ddd-dd-mmm-yyyy__HH-MM-SS')) ;
 
 % make job folder, containing cluster.mat
 mkdir(cluster.id)
 save( sprintf('%s/cluster.mat', cluster.id) , 'cluster' )
 
+% generate and add agricola.sh script to job folder
+fid = fopen(sprintf('%s/agricola.sh', cluster.id),'w') ;
+fwrite(fid,PBS2script(PBS)) ; fclose(fid) ;
+
 % shorthands
 ssh = sprintf('ssh %s@%s',user,server) ;
 
-% copy agricola.sub onto agricola.submit as base submit file
-xinu( sprintf('cp "%s/agricola.sub" %s/agricola.submit ; echo ''notify_user = %s'' >> %s/agricola.submit ; echo ''executable = %s.sh'' >> %s/agricola.submit ;',...
-               here, cluster.id , email , cluster.id , variable_name , cluster.id )) ;
+% scp cluster folder to remote directory
+xinu( sprintf('scp -r %s %s@%s:%s' , cluster.id,user,server,root)) ; 
 
-% copy agricola.sh onto <VARIABLE_NAME>.sh
-xinu( sprintf('cp "%s/agricola.sh" %s/%s.sh', here, cluster.id , variable_name )) ;
-
-% append length(args) queue statements to agricola.submit
-for i=1:length(args)
-    xinu( sprintf(...
-        'echo ''\njob_number = %d\nqueue\n'' >> %s/agricola.submit',i,cluster.id)) ;
-end
-
-% scp cluster folder, .sh and .submit files to remote directory
-xinu( sprintf('scp -r %s %s@%s:%s' , cluster.id,user,server,root)) ;
-lscp(sprintf('"%s/%s.sh" "%s/agricola.m"',...
-              here,variable_name,here),...
-     sprintf('%s@%s:%s/%s',user,server,root,cluster.id)) ;
- 
- 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 %  MODIFY THIS IF YOU NEED MORE FILES TRANSFERED!!!  %
@@ -83,7 +83,7 @@ xinu(sprintf('rm -rf %s',cluster.id)) ;
 
 [submit_status , submit_out] = ...
 xinu( sprintf(...
-     '%s ''PATH=$PATH:/opt/condor/bin ; cd %s/%s ; condor_submit agricola.submit''',...
+     '%s ''cd %s/%s ; qsub agricola.sh''',...
       ssh , root , cluster.id ) , '-echo') ;
 
 cluster.submit.status = submit_status ;
