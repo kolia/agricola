@@ -13,7 +13,7 @@ result.job_number    = job_number ;
 result.UNFINISHED = 1 ;
 
 % save intermediate result.mat
-save(sprintf('result_%d',job_number-1),'result')
+save(sprintf('result_%d',job_number),'result')
 
 % set random seed to different values for different jobs
 RandStream.setDefaultStream(RandStream('mt19937ar','seed',sum(100*clock)+job_number));
@@ -33,4 +33,4 @@ result = rmfield(result,'UNFINISHED') ;
 eval(eval_string)
 
 % save result.mat
-save(sprintf('result_%d',job_number-1),'result')
+save(sprintf('result_%d',job_number),'result')

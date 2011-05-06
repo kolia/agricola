@@ -58,14 +58,14 @@ for i=length(cluster_ids):-1:1
                     fclose(fid) ;
                 end
                 
-                match = regexp(filenames{j} , '^result_\d+|[0-9]+\.[logfilerut]+$' , 'match') ;
+                match = regexp(filenames{j} , '^result_\d+\.[a-zA-Z]+$' , 'match') ;
                 if ~isempty(match)
                     match = match{1} ;
                     job_number_string = regexp(match,'\d+' , 'match') ;
-                    job_number  = 1 + str2double(job_number_string{1}) ;
+                    job_number  = str2double(job_number_string{1}) ;
                     file_type   = regexp(match,'[a-z]+' , 'match') ;
-                    file_type   = file_type{1} ;
-                    if strcmp(file_type,'result')
+                    file_type   = file_type{end} ;
+                    if strcmp(file_type,'mat')
                         if isfield(x,'result')
                             if j==1 && isfield(result,x.variable_name)
                                 result.(x.variable_name) = {} ;
@@ -87,9 +87,12 @@ end
 
 inds = [] ;
 for i=1:length(cluster_ids)
-    if ~isempty(cluster_ids{i})
-        inds = [inds i] ;
+    if ~isempty(cluster_ids{i}) , inds = [inds i] ; end
+    jobinds = [] ;
+    for j=1:length(cluster{i}.job)
+        if ~isempty(cluster{i}.job{j}) , jobinds = [jobinds j] ; end
     end
+    cluster{i}.job = cluster{i}.job(jobinds) ;
 end
 cluster = cluster(inds) ;
 cluster = add_status(cluster) ;
@@ -106,17 +109,16 @@ function cluster = add_status(cluster)
 
 for i=1:length(cluster)
     for j=1:length(cluster{i}.job)
-        if isfield(cluster{i}.job{j},'result') && ~isfield(cluster{i}.job{j}.result,'UNFINISHED')
-            cluster{i}.job{j}.status = 'success' ;
-        elseif isfield(cluster{i}.job{j},'err') && ~isempty(cluster{i}.job{j}.err)
+        if isfield(cluster{i}.job{j},'err') && ~isempty(cluster{i}.job{j}.err)
             cluster{i}.job{j}.status = 'error' ;
-        elseif isfield(cluster{i}.job{j},'logfile')
-            termination = regexp(cluster{i}.job{j}.logfile,' Job terminated\.','match') ;
-            if isempty(termination)
+        elseif isfield(cluster{i}.job{j},'result')
+            if isfield(cluster{i}.job{j}.result,'UNFINISHED')
                 cluster{i}.job{j}.status = 'pending' ;
             else
                 cluster{i}.job{j}.status = 'done' ;
             end
+        else
+            cluster{i}.job{j}.status = 'pending' ;
         end
     end
 end

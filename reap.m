@@ -97,14 +97,17 @@ if agricola.conflict
     weed(agricola.cluster) ;
 end
 
-agricola.blurb   = sprintf('of  cluster 1  job 1 :  ') ;
+agricola.blurb   = sprintf('for  cluster 1  job 1 :  ') ;
 agricola.message = '' ;
 if strcmp( agricola.cluster{1}.job{1}.status , 'error')
-        fprintf('ERROR FILE %s\n%s',agricola.cluster{1}.job{1}.err,agricola.blurb)
+        fprintf('ERROR FILE %s:\n\n%s',...
+            agricola.blurb,agricola.cluster{1}.job{1}.err)
 else
-    fprintf('\n\n***************\n| OUTPUT FILE |  %s\n***************\n\n%s',agricola.blurb,agricola.cluster{1}.job{1}.out)
-    if strcmp( agricola.cluster{1}.job{1}.status , 'success')
-        agricola.message = sprintf('  --  result stored in %s',agricola.cluster{1}.job{1}.result.variable_name) ;
+    fprintf('\n\n***************\n| OUTPUT FILE |  %s\n***************\n\n%s',...
+             agricola.blurb,agricola.cluster{1}.job{1}.out)
+    if strcmp( agricola.cluster{1}.job{1}.status , 'done')
+        agricola.message = sprintf('  --  result stored in %s',...
+                       agricola.cluster{1}.job{1}.result.variable_name) ;
     end
 end
 fprintf('\n\n')

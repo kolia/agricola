@@ -10,8 +10,8 @@ PBS.W   = 'group_list=hpcstats' ;    % user group
 
 % Torque directives : default values
 % http://wiki.hpc.ufl.edu/index.php/PBS_Directives
-PBS.l = 'nodes=1,walltime=01:00:00,mem=1000mb' ;
-PBS.m = 'abe' ;
+PBS.l.nodes    = '1' ;
+PBS.l.walltime = '01:00:00' ;
+PBS.l.mem      = '1000mb' ;
+PBS.m          = 'abe' ;
 % PBS.V='';  % uncomment to export environment variables to agricola jobs
-
-
