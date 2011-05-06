@@ -2,7 +2,7 @@ agricola README
 ---------------
 
    Use case:
-   You have access to a condor cluster and want to run matlab jobs on it.
+   You have access to a Torque/Maui cluster and want to run matlab jobs on it.
 
    agricola sends jobs to the cluster for you from within matlab, and
    retrieves information about job progess and results as well, all with just two commands: `sow` and `reap`.
@@ -35,6 +35,9 @@ usage
 >   been equivalent to typing:  
 >   ` my_result = my_function(some_parameters) ; `
    
+`>> sow( 'my_result' , @()my_function(some_parameters) , PBS_options ) ;`
+>   optionally, PBS directives can be added in the form of a matlab struct.
+>   Look at SET_ME_UP.m for an example PBS_options.
 
 
 `>> reap ; `
