@@ -102,7 +102,7 @@ agricola.message = '' ;
 if strcmp( agricola.cluster{1}.job{1}.status , 'error')
         fprintf('ERROR FILE %s:\n\n%s',...
             agricola.blurb,agricola.cluster{1}.job{1}.err)
-else
+elseif isfield(agricola.cluster{1}.job{1},'out')
     fprintf('\n\n***************\n| OUTPUT FILE |  %s\n***************\n\n%s',...
              agricola.blurb,agricola.cluster{1}.job{1}.out)
     if strcmp( agricola.cluster{1}.job{1}.status , 'done')

@@ -36,31 +36,20 @@ for i=length(cluster_ids):-1:1
         warning off ; mkdir(cluster_ids{i}) ; warning on ;
         cluster{i}.id = cluster_ids{i} ;
         
-        % we're looking for all variables
-        if nargin<2
-            [status,stdout] = unix(sprintf(...
-                '%s "cd %s/%s ; ls -r | grep ''\\(^[0-9]\\+\\.[0-9]\\+\\.*\\|%s\\)''"',...
-                ssh,root,cluster_ids{i},grepper)) ;
-%             status = xinu(sprintf('scp %s:%s/%s/[0-9][0-9][0-9]*.* %s',...
-%                 login,root,cluster_ids{i},cluster_ids{i})) ;
-            status = 0 ;
-            for ii=1:length(patterns)
-                s = xinu(sprintf('scp %s:%s/%s/%s* %s',...
-                    login,root,cluster_ids{i},patterns{ii},cluster_ids{i})) ;
-                status = status || s ;
-            end
-            
-        % we're looking for one variable, this must be the one
-        else
-            [status,stdout] = unix(sprintf(...
-                '%s "cd %s/%s ; ls -r | grep ''%s''"',...
-                ssh,root,cluster_ids{i},grepper)) ;
-            status = xinu(sprintf('scp %s:%s/%s/[0-9r][0-9e][0-9s]*.* %s',...
-                login,root,cluster_ids{i},cluster_ids{i})) ;            
+        % get files that match patterns
+        [status,stdout] = unix(sprintf(...
+            '%s "cd %s/%s ; ls -r | grep ''%s''"',...
+            ssh,root,cluster_ids{i},grepper)) ;
+        %             status = xinu(sprintf('scp %s:%s/%s/[0-9][0-9][0-9]*.* %s',...
+        %                 login,root,cluster_ids{i},cluster_ids{i})) ;
+        status = 0 ;
+        for ii=1:length(patterns)
+            s = xinu(sprintf('scp %s:%s/%s/%s* %s',...
+                login,root,cluster_ids{i},patterns{ii},cluster_ids{i})) ;
+            status = status || s ;
         end
         
-        
-        if ~status
+        if ~status && nargout>1
             filenames = regexp(stdout,'\S+','match') ;
             for j=1:length(filenames)
                 
@@ -103,8 +92,8 @@ for i=length(cluster_ids):-1:1
                     end
                 end
             end
+            unix(sprintf('rm -rf %s',cluster_ids{i})) ;
         end
-        unix(sprintf('rm -rf %s',cluster_ids{i})) ;
     end
 end
 
