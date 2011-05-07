@@ -1,4 +1,15 @@
-function [result , cluster] = reaper( var_name )
+function [result , cluster] = reaper( patterns , var_name )
+
+if nargin<1 , patterns = {} ; end
+patterns = [patterns {'result'}] ;
+pattern  = '' ;
+grepper  = '' ;
+for i=1:length(patterns)
+    pattern = [pattern sprintf('|%s*',patterns{i})] ;
+    grepper = [grepper sprintf('\\|%s*',patterns{i})] ;
+end
+pattern = pattern(2:end) ;
+grepper = grepper(3:end) ;
 
 SET_ME_UP
 
@@ -21,23 +32,29 @@ result  = struct ;
 for i=length(cluster_ids):-1:1
     
     % should we look for 'var_name' on server?
-    if nargin<1 || strcmp(cluster_ids{i}(11:10+length(var_name)),var_name)
+    if nargin<2 || strcmp(cluster_ids{i}(11:10+length(var_name)),var_name)
         warning off ; mkdir(cluster_ids{i}) ; warning on ;
         cluster{i}.id = cluster_ids{i} ;
         
         % we're looking for all variables
-        if nargin<1
+        if nargin<2
             [status,stdout] = unix(sprintf(...
-                '%s "cd %s/%s ; ls -r | grep ''\\(^[0-9]\\+\\.[0-9]\\+\\.*\\|result*\\)''"',...
-                ssh,root,cluster_ids{i})) ;
-            status = xinu(sprintf('scp %s:%s/%s/[0-9r][0-9e][0-9s]*.* %s',...
-                login,root,cluster_ids{i},cluster_ids{i})) ;
+                '%s "cd %s/%s ; ls -r | grep ''\\(^[0-9]\\+\\.[0-9]\\+\\.*\\|%s\\)''"',...
+                ssh,root,cluster_ids{i},grepper)) ;
+%             status = xinu(sprintf('scp %s:%s/%s/[0-9][0-9][0-9]*.* %s',...
+%                 login,root,cluster_ids{i},cluster_ids{i})) ;
+            status = 0 ;
+            for ii=1:length(patterns)
+                s = xinu(sprintf('scp %s:%s/%s/%s* %s',...
+                    login,root,cluster_ids{i},patterns{ii},cluster_ids{i})) ;
+                status = status || s ;
+            end
             
         % we're looking for one variable, this must be the one
         else
             [status,stdout] = unix(sprintf(...
-                '%s "cd %s/%s ; ls -r | grep ''result*''"',...
-                ssh,root,cluster_ids{i})) ;
+                '%s "cd %s/%s ; ls -r | grep ''%s''"',...
+                ssh,root,cluster_ids{i},grepper)) ;
             status = xinu(sprintf('scp %s:%s/%s/[0-9r][0-9e][0-9s]*.* %s',...
                 login,root,cluster_ids{i},cluster_ids{i})) ;            
         end
@@ -58,24 +75,30 @@ for i=length(cluster_ids):-1:1
                     fclose(fid) ;
                 end
                 
-                match = regexp(filenames{j} , '^result_\d+\.[a-zA-Z]+$' , 'match') ;
+                match = regexp(filenames{j} , sprintf('^(%s)\\D*\\d+\\D*$',pattern) , 'match') ;
                 if ~isempty(match)
                     match = match{1} ;
                     job_number_string = regexp(match,'\d+' , 'match') ;
                     job_number  = str2double(job_number_string{1}) ;
-                    file_type   = regexp(match,'[a-z]+' , 'match') ;
+                    file_type   = regexp(match,'[a-zA-Z]+' , 'match') ;
+                    this_pattern= regexp(file_type{1},pattern,'match') ;
+                    this_pattern=this_pattern{1} ;
                     file_type   = file_type{end} ;
-                    if strcmp(file_type,'mat')
-                        if isfield(x,'result')
-                            if j==1 && isfield(result,x.variable_name)
-                                result.(x.variable_name) = {} ;
+                    if strcmp(file_type,'mat') && ~isempty(this_pattern)
+                        if strcmp(this_pattern,'result')
+                            if isfield(x,'result')
+                                if j==1 && isfield(result,x.variable_name)
+                                    result.(x.variable_name) = {} ;
+                                end
+                                result.(x.variable_name){job_number} = x.result ;
+                                cluster{i}.job{job_number}.result = rmfield(x,'result') ;
+                            else
+                                cluster{i}.job{job_number}.result = x ;
                             end
-                            result.(x.variable_name){job_number} = x.result ;
-                            cluster{i}.job{job_number}.result = rmfield(x,'result') ;
                         else
-                            cluster{i}.job{job_number}.result = x ;
+                            cluster{i}.job{job_number}.(this_pattern) = x ;
                         end
-                    else
+                    elseif isfield(x,'result')
                         cluster{i}.job{job_number}.(file_type) = x ;
                     end
                 end
@@ -99,7 +122,7 @@ cluster = add_status(cluster) ;
 fprintf('\n')
 display_status(cluster)
 
-if nargin>0
+if nargin>1
    result = result.(var_name) ; 
 end
 end

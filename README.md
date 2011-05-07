@@ -81,5 +81,5 @@ usage
    directory, making sure to add them to the path in the functions you
    call. This could be improved in future versions by giving `sow.m` a list of
    paths to copy from. Also, no support for mex files: compilation of mex
-   files can easily be added to your own functions. Check out `sow.m` line 74 
+   files can easily be added to your own functions. Check out `sow.m` line 72 
    to add more files to be transferred.
