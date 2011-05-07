@@ -36,6 +36,7 @@ usage
 >   ` my_result = my_function(some_parameters) ; `
    
 `>> sow( 'my_result' , @()my_function(some_parameters) , PBS_options ) ;`
+
 >   optionally, PBS directives can be added in the form of a matlab struct.
 >   Look at SET_ME_UP.m for an example PBS_options.
 
